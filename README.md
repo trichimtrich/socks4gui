@@ -33,9 +33,11 @@ Suitable release for python (2./3.)
 `brew install qt`
 
 2. Download / install SIP
-`wget https://sourceforge.net/projects/pyqt/files/sip/sip-4.18.1/sip-4.18.1.tar.gz`
-`tar xzvf sip-4.18.1.tar.gz`
-`cd sip-4.18.1`
+`wget https://sourceforge.net/projects/pyqt/files/sip/sip-4.18.1/sip-4.18.1.tar.gz
+
+tar xzvf sip-4.18.1.tar.gz
+
+cd sip-4.18.1`
 `python configure.py`
 `make`
 `sudo make install`
