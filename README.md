@@ -1,13 +1,15 @@
 # socks4gui
 a multi-platform socks4 server based on twisted framework with graphic UI, log/on-air modify traffic, user-defined script (python)
+fork from [socks4] (https://github.com/superkhung/socks4) :ok_hand:
 
-## model / operation
+## operation
+![model] (https://github.com/trichimtrich/socks4gui/blob/master/model.png?raw=true)
 
 ## requirement
-Python
-Qt Libraries
-PyQt4
-twisted framework for python
+- Python
+- twisted framework
+- Qt Libraries
+- SIP / PyQt4
 
 ## installation
 ### python / twisted framework
@@ -16,7 +18,7 @@ twisted framework for python
 ### QtLib / PyQt4
 #### Windows
 Suitable release for python (2./3.)
-https://www.riverbankcomputing.com/software/pyqt/download
+![PyQt4] (https://www.riverbankcomputing.com/software/pyqt/download)
 
 #### Linux / MacOS
 1. Qt Libraries
