@@ -19,7 +19,7 @@ def enCap(obj, csinfo, data):
 	return data
 
 def deCap(obj, csinfo, data):
-	if obj == 0: #sender -> receiver
+	if obj == 0: #sender <- receiver
 		print "[+] Decapsulation " + "%s:%s --> %s:%s" % csinfo + " - Raw data length = %s" % len(data)
 	else:
 		print "[+] Decapsulation " + "%s:%s <-- %s:%s" % csinfo + " - Raw data length = %s" % len(data)
