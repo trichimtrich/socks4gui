@@ -1,5 +1,5 @@
 # socks4gui
-> fork from [socks4 by spk] (https://github.com/superkhung/socks4) :ok_hand:
+> forked from [socks4 by spk] (https://github.com/superkhung/socks4) :ok_hand:
 
 - a socks4 server based on twisted framework
 - graphic UI (Qt4)
@@ -7,43 +7,53 @@
 - log/on-air modify traffic
 - user-defined script (python)
 
-## operation
+## Operation
 ![model] (https://github.com/trichimtrich/socks4gui/blob/master/model.png?raw=true)
 
-## requirement
+## Requirement
 - Python
 - twisted framework
 - Qt Libraries
 - SIP / PyQt4
 
-## installation
+## Installation
+
 ### python / twisted framework
-`pip install twisted`
+All platform `pip install twisted`
 
 ### QtLib / PyQt4
+
 #### Windows
 Suitable release for python (2./3.)
-![PyQt4] (https://www.riverbankcomputing.com/software/pyqt/download)
+[PyQt4] (https://www.riverbankcomputing.com/software/pyqt/download)
 
 #### Linux / MacOS
-1. Qt Libraries
+- Qt Libraries
+
 ##### Linux
 `sudo apt-get install python-dev build-essential qt4-dev-tools libqt4-dev libqt4-core libqt4-gui`
 
 ##### MacOS
 `brew install qt`
 
-2. Download / install SIP
-`wget https://sourceforge.net/projects/pyqt/files/sip/sip-4.18.1/sip-4.18.1.tar.gz`
+- SIP
 
-`tar xzvf sip-4.18.1.tar.gz`
+```
+wget https://sourceforge.net/projects/pyqt/files/sip/sip-4.18.1/sip-4.18.1.tar.gz
+tar xzvf sip-4.18.1.tar.gz
+cd sip-4.18.1
+python configure.py
+make
+sudo make install
+```
 
-`cd sip-4.18.1`
+- PyQt4
 
-`python configure.py`
+Download source code (Linux) [https://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt-x11-gpl-4.11.4.tar.gz/download] / (MacOS) [https://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt-mac-gpl-4.11.4.tar.gz/download]
 
-`make`
-
-`sudo make install`
-
-3. Download / install PyQt4
+```
+cd <extracted folder>
+python configure.py
+make
+sudo make install
+```
