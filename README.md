@@ -1,10 +1,10 @@
 # socks4gui
+> fork from [socks4 by spk] (https://github.com/superkhung/socks4) :ok_hand:
 - a socks4 server based on twisted framework
 - graphic UI (Qt4)
 - multi platform (Windows/Linux/MacOS)
 - log/on-air modify traffic
 - user-defined script (python)
-fork from [socks4] (https://github.com/superkhung/socks4) :ok_hand:
 
 ## operation
 ![model] (https://github.com/trichimtrich/socks4gui/blob/master/model.png?raw=true)
@@ -26,12 +26,17 @@ Suitable release for python (2./3.)
 
 #### Linux / MacOS
 1. Qt Libraries
+##### Linux
 `sudo apt-get install python-dev build-essential qt4-dev-tools libqt4-dev libqt4-core libqt4-gui`
+##### MacOS
+`brew install qt`
+
 2. Download / install SIP
-`wget https://sourceforge.net/projects/pyqt/files/sip/sip-4.18.1/sip-4.18.1.tar.gz
-tar xzvf sip-4.18.1.tar.gz
-cd sip-4.18.1
-python configure.py
-make
-sudo make install`
+`wget https://sourceforge.net/projects/pyqt/files/sip/sip-4.18.1/sip-4.18.1.tar.gz`
+`tar xzvf sip-4.18.1.tar.gz`
+`cd sip-4.18.1`
+`python configure.py`
+`make`
+`sudo make install`
+
 3. Download / install PyQt4
