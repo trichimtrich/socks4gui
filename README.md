@@ -1,5 +1,9 @@
 # socks4gui
-a multi-platform socks4 server based on twisted framework with graphic UI, log/on-air modify traffic, user-defined script (python)
+- a socks4 server based on twisted framework
+- graphic UI (Qt4)
+- multi platform (Windows/Linux/MacOS)
+- log/on-air modify traffic
+- user-defined script (python)
 fork from [socks4] (https://github.com/superkhung/socks4) :ok_hand:
 
 ## operation
