@@ -62,6 +62,8 @@ sudo make install
 
 ## Usage
 
+`python socks4gui.py`
+
 ![Screenshot] (https://github.com/trichimtrich/socks4gui/blob/master/screenshot.png?raw=true)
 Almost like [burp suite] (https://portswigger.net/burp/) :heart_eyes: :heart_eyes: :heart_eyes:
 
