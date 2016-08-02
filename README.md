@@ -63,5 +63,6 @@ sudo make install
 ## Usage
 
 ![Screenshot] (https://github.com/trichimtrich/socks4gui/blob/master/screenshot.png?raw=true)
-Almost like burp suite :heart_eyes: :heart_eyes: :heart_eyes:
-Hehe. Enjoy :simple_smile:
+Almost like [burp suite] (https://portswigger.net/burp/) :heart_eyes: :heart_eyes: :heart_eyes:
+
+Hehe. Enjoy :smiley:
