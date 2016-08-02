@@ -1,5 +1,5 @@
 # socks4gui
-> forked from [socks4 by spk] (https://github.com/superkhung/socks4) :ok_hand:
+> forked from [socks4 by spk] (https://github.com/superkhung/socks4) :ok_hand: :ok_hand: :ok_hand:
 
 - a socks4 server based on twisted framework
 - graphic UI (Qt4)
@@ -35,13 +35,14 @@ Suitable release for python (2./3 at [PyQt4 Homepage] (https://www.riverbankcomp
 
 #### Linux / MacOS
 - Qt Libraries
+
 ##### Linux
 `sudo apt-get install python-dev build-essential qt4-dev-tools libqt4-dev libqt4-core libqt4-gui`
 
 ##### MacOS
 `brew install qt`
 
-- SIP
+- [SIP] (https://www.riverbankcomputing.com/software/sip/download)
 ```
 wget https://sourceforge.net/projects/pyqt/files/sip/sip-4.18.1/sip-4.18.1.tar.gz
 tar xzvf sip-4.18.1.tar.gz
@@ -51,7 +52,7 @@ make
 sudo make install
 ```
 
-- PyQt4
+- [PyQt4] (https://www.riverbankcomputing.com/software/pyqt/download)
 
 Download source code [Linux] (https://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt-x11-gpl-4.11.4.tar.gz/download) / [MacOS] (https://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt-mac-gpl-4.11.4.tar.gz/download)
 ```
@@ -60,3 +61,9 @@ python configure.py
 make
 sudo make install
 ```
+
+## Usage
+
+![Screenshot] (https://github.com/trichimtrich/socks4gui/blob/master/screenshot.png?raw=true)
+Almost like burp suite :heart_eyes: :heart_eyes: :heart_eyes:
+Hehe. Enjoy :simple_smile:
