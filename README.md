@@ -8,7 +8,14 @@
 - user-defined script (python)
 
 ## Operation
+- Decap module: user-defined script (decode/decrypt/...)
+- Encap module: user-defined script (encode/encrypt/...)
+- Replace/Ignore mode: modify packet
+
 ![model] (https://github.com/trichimtrich/socks4gui/blob/master/model.png?raw=true)
+
+*:exclamation: module can be disable (redstar)*
+*:grey_exclamation: transmit packet with no modifying when disable all modules (redline)*
 
 ## Requirement
 - Python
@@ -24,12 +31,10 @@ All platform `pip install twisted`
 ### QtLib / PyQt4
 
 #### Windows
-Suitable release for python (2./3.)
-[PyQt4] (https://www.riverbankcomputing.com/software/pyqt/download)
+Suitable release for python (2./3 at [PyQt4 Homepage] (https://www.riverbankcomputing.com/software/pyqt/download)
 
 #### Linux / MacOS
 - Qt Libraries
-
 ##### Linux
 `sudo apt-get install python-dev build-essential qt4-dev-tools libqt4-dev libqt4-core libqt4-gui`
 
@@ -37,7 +42,6 @@ Suitable release for python (2./3.)
 `brew install qt`
 
 - SIP
-
 ```
 wget https://sourceforge.net/projects/pyqt/files/sip/sip-4.18.1/sip-4.18.1.tar.gz
 tar xzvf sip-4.18.1.tar.gz
@@ -49,8 +53,7 @@ sudo make install
 
 - PyQt4
 
-Download source code (Linux) [https://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt-x11-gpl-4.11.4.tar.gz/download] / (MacOS) [https://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt-mac-gpl-4.11.4.tar.gz/download]
-
+Download source code [Linux] (https://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt-x11-gpl-4.11.4.tar.gz/download) / [MacOS] (https://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt-mac-gpl-4.11.4.tar.gz/download)
 ```
 cd <extracted folder>
 python configure.py
