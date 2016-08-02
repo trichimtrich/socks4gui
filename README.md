@@ -31,7 +31,7 @@ All platform `pip install twisted`
 ### QtLib / PyQt4
 
 #### Windows
-Suitable release for python (2./3 at [PyQt4 Homepage] (https://www.riverbankcomputing.com/software/pyqt/download)
+Suitable release for python (2/3) at [PyQt4 Homepage] (https://www.riverbankcomputing.com/software/pyqt/download)
 
 #### Linux / MacOS
 - Qt Libraries
