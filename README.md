@@ -5,7 +5,7 @@
 - graphic UI (Qt4)
 - multi platform (Windows/Linux/MacOS)
 - log/on-air modify traffic
-- user-defined script (python)
+- user-defined script ([python example] (https://github.com/trichimtrich/socks4gui/blob/master/testscript.py))
 
 ## Operation
 - Decap module: user-defined script (decode/decrypt/...)
