@@ -36,11 +36,9 @@ Suitable release for python (2./3 at [PyQt4 Homepage] (https://www.riverbankcomp
 #### Linux / MacOS
 - Qt Libraries
 
-##### Linux
-`sudo apt-get install python-dev build-essential qt4-dev-tools libqt4-dev libqt4-core libqt4-gui`
+**Linux:** `sudo apt-get install python-dev build-essential qt4-dev-tools libqt4-dev libqt4-core libqt4-gui`
 
-##### MacOS
-`brew install qt`
+**MacOS:** `brew install qt`
 
 - [SIP] (https://www.riverbankcomputing.com/software/sip/download)
 ```
