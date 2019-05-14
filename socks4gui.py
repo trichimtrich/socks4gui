@@ -1,20 +1,4 @@
-#!/usr/bin/env python
-"""
-SOCKS4 Proxy
-
-v1.0 socks4
-	superkhung@vnsecurity.net
-	a socks4 server based on twisted framework
-	it can be use to log/modify network traffic
-
-
-v2.0 socks4gui
-	trichimtrich@gmail.com
-	+ Add QtGui
-	+ On-air content modify
-	+ Log view in multiple formats
-	+ User-defined encoder/decoder (python)
-"""
+#!/usr/bin/env python3
 
 
 #Core modules
