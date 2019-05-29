@@ -7,7 +7,7 @@ from threading import Thread
 from time import strftime
 
 #Core QtGui, UI Script
-from PyQt4 import QtGui
+from PyQt5 import QtGui
 import formmain
 import formrule
 
