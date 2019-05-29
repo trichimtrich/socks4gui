@@ -8,8 +8,10 @@ from time import strftime
 
 #Core QtGui, UI Script
 from PyQt5 import QtGui
-import formmain
-import formrule
+from PyQt5 import QtWidgets
+
+from window import main as formmain
+from window import rule as formrule
 
 #Core Network
 from twisted.internet.protocol import Factory
@@ -32,16 +34,17 @@ iscap = False; modcap = None #encoder/decoder
 varObject = (0, 1) #view on sender/receiver
 varType = (0, 1, 2) #view on mode (ignore/replace)
 
+import PyQt5
 
 #Utilities func
 def writeConsole(msg): #console log
 	st = strftime("[%H:%M:%S %d/%m/%Y] ") + msg
-	open(setlog, "ab+").write(st + "\n")
+	open(setlog, "a+").write(st + "\n")
 	formmain.txtConsole.append(st)
 	formmain.txtConsole.verticalScrollBar().setValue(formmain.txtConsole.verticalScrollBar().maximum())
 
 def addCapture(msg, ind, status=0): #list capturing
-	iteminfo = QtGui.QListWidgetItem(msg)
+	iteminfo = QtWidgets.QListWidgetItem(msg)
 	iteminfo.setWhatsThis(str(ind))
 	if status == 1: iteminfo.setBackground(QtGui.QColor('red'))
 	if status == 2: iteminfo.setBackground(QtGui.QColor('green'))
@@ -138,7 +141,7 @@ class MSock4(SOCKSv4):
 		return SOCKSv4.write(self, data2)
 
 
-class FormRule(QtGui.QDialog, formrule.Ui_Dialog):
+class FormRule(QtWidgets.QDialog, formrule.Ui_Dialog):
 	def __init__(self):
 		super(self.__class__, self).__init__()
 		self.setupUi(self)
@@ -152,7 +155,7 @@ class FormRule(QtGui.QDialog, formrule.Ui_Dialog):
 		self.txtReplace.setEnabled(False)
 
 
-class FormMain(QtGui.QMainWindow, formmain.Ui_MainWindow):
+class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
 	def __init__(self):
 		super(self.__class__, self).__init__()
 		self.setupUi(self)
@@ -199,7 +202,7 @@ class FormMain(QtGui.QMainWindow, formmain.Ui_MainWindow):
 	#Widget events - Setting Tab
 	def btnLog_clicked(self):
 		global setlog
-		fn = QtGui.QFileDialog.getSaveFileName(self, "Save log", filter='Log file (*.log);;All file (*.*)')
+		fn = QtWidgets.QFileDialog.getSaveFileName(self, "Save log", filter='Log file (*.log);;All file (*.*)')
 		if fn:
 			setlog = fn
 			self.txtSetLog.setText(fn)
@@ -228,8 +231,8 @@ class FormMain(QtGui.QMainWindow, formmain.Ui_MainWindow):
 	def btnEncap_clicked(self):
 		global modcap
 		if iscapture:
-			QtGui.QMessageBox.information(self, "Info", "Stop daemon first!"); return
-		fn = QtGui.QFileDialog.getOpenFileName(self, "Open encap/decap module", filter='Python script (*.py);;All file (*.*)')
+			QtWidgets.QMessageBox.information(self, "Info", "Stop daemon first!"); return
+		fn = QtWidgets.QFileDialog.getOpenFileName(self, "Open encap/decap module", filter='Python script (*.py);;All file (*.*)')
 		if fn:
 			try:
 				modcap = load_source('', str(fn))
@@ -237,7 +240,7 @@ class FormMain(QtGui.QMainWindow, formmain.Ui_MainWindow):
 					modcap = None
 			except: modcap = None
 			if modcap == None:
-				QtGui.QMessageBox.information(self, "Info", "Cannot load encap/decap module!")
+				QtWidgets.QMessageBox.information(self, "Info", "Cannot load encap/decap module!")
 			else:
 				self.txtEncap.setText(fn)
 				writeConsole("Loaded encap/decap module")
@@ -248,7 +251,7 @@ class FormMain(QtGui.QMainWindow, formmain.Ui_MainWindow):
 		if iscap: writeConsole("Capsule mode is ON")
 		else: writeConsole("Capsule mode is OFF")
 		if iscap == True and modcap == None:
-			QtGui.QMessageBox.information(self, "Info", "Cannot load encap/decap module!")
+			QtWidgets.QMessageBox.information(self, "Info", "Cannot load encap/decap module!")
 			
 	def chkReplace_stateChanged(self):
 		global isreplace
@@ -279,7 +282,7 @@ class FormMain(QtGui.QMainWindow, formmain.Ui_MainWindow):
 			formrule.txtMatch.setText(self.tblRule.item(ind, 2).text())
 			formrule.txtReplace.setText(self.tblRule.item(ind, 3).text())
 
-			if QtGui.QDialog.Rejected == formrule.exec_(): return
+			if QtWidgets.QDialog.Rejected == formrule.exec_(): return
 			self.tblRule.item(ind, 0).setText(str(formrule.chkEnabled.isChecked()))
 			if formrule.optReplace.isChecked():
 				self.tblRule.item(ind, 1).setText("Replace")
@@ -290,7 +293,7 @@ class FormMain(QtGui.QMainWindow, formmain.Ui_MainWindow):
 			self.tblRule.item(ind, 2).setText(formrule.txtMatch.text())
 			parseRule()
 		else:
-			QtGui.QMessageBox.information(self, "Info", "Please select a row!")
+			QtWidgets.QMessageBox.information(self, "Info", "Please select a row!")
 
 	def btnDelRule_clicked(self):
 		ind = self.tblRule.currentRow()
@@ -300,7 +303,7 @@ class FormMain(QtGui.QMainWindow, formmain.Ui_MainWindow):
 				self.tblRule.selectRow(ind)
 			parseRule()
 		else:
-			QtGui.QMessageBox.information(self, "Info", "Please select a row!")
+			QtWidgets.QMessageBox.information(self, "Info", "Please select a row!")
 
 	def btnUpRule_clicked(self):
 		ind = self.tblRule.currentRow()
@@ -313,7 +316,7 @@ class FormMain(QtGui.QMainWindow, formmain.Ui_MainWindow):
 				self.tblRule.selectRow(ind-1)
 				parseRule()
 		else:
-			QtGui.QMessageBox.information(self, "Info", "Please select a row!")
+			QtWidgets.QMessageBox.information(self, "Info", "Please select a row!")
 
 	def btnDownRule_clicked(self):
 		ind = self.tblRule.currentRow()
@@ -326,21 +329,21 @@ class FormMain(QtGui.QMainWindow, formmain.Ui_MainWindow):
 				self.tblRule.selectRow(ind+1)
 				parseRule()
 		else:
-			QtGui.QMessageBox.information(self, "Info", "Please select a row!")
+			QtWidgets.QMessageBox.information(self, "Info", "Please select a row!")
 
 	def btnAddRule_clicked(self):
 		formrule = FormRule()
-		if QtGui.QDialog.Rejected == formrule.exec_(): return
+		if QtWidgets.QDialog.Rejected == formrule.exec_(): return
 		ind = self.tblRule.rowCount()
 		self.tblRule.insertRow(ind)
-		self.tblRule.setItem(ind, 0, QtGui.QTableWidgetItem(str(formrule.chkEnabled.isChecked())))
+		self.tblRule.setItem(ind, 0, QtWidgets.QTableWidgetItem(str(formrule.chkEnabled.isChecked())))
 		if formrule.optReplace.isChecked():
-			self.tblRule.setItem(ind, 1, QtGui.QTableWidgetItem("Replace"))
-			self.tblRule.setItem(ind, 3, QtGui.QTableWidgetItem(formrule.txtReplace.text()))
+			self.tblRule.setItem(ind, 1, QtWidgets.QTableWidgetItem("Replace"))
+			self.tblRule.setItem(ind, 3, QtWidgets.QTableWidgetItem(formrule.txtReplace.text()))
 		else:
-			self.tblRule.setItem(ind, 1, QtGui.QTableWidgetItem("Ignore"))
-			self.tblRule.setItem(ind, 3, QtGui.QTableWidgetItem(""))
-		self.tblRule.setItem(ind, 2, QtGui.QTableWidgetItem(formrule.txtMatch.text()))
+			self.tblRule.setItem(ind, 1, QtWidgets.QTableWidgetItem("Ignore"))
+			self.tblRule.setItem(ind, 3, QtWidgets.QTableWidgetItem(""))
+		self.tblRule.setItem(ind, 2, QtWidgets.QTableWidgetItem(formrule.txtMatch.text()))
 		parseRule()
 		
 
@@ -369,8 +372,8 @@ class FormMain(QtGui.QMainWindow, formmain.Ui_MainWindow):
 
 	def btnSaveDetail_clicked(self):
 		if self.lstCapture.currentRow()<0:
-			QtGui.QMessageBox.information(self, "Info", "Please select a row!"); return
-		fn = QtGui.QFileDialog.getSaveFileName(self, "Save raw packet", filter='Binary file (*.bin);;All file (*.*)')
+			QtWidgets.QMessageBox.information(self, "Info", "Please select a row!"); return
+		fn = QtWidgets.QFileDialog.getSaveFileName(self, "Save raw packet", filter='Binary file (*.bin);;All file (*.*)')
 		if fn:
 			ind = int(self.lstCapture.currentItem().whatsThis())
 			open(fn, 'wb').write(bufcapture[ind][2])
@@ -458,7 +461,7 @@ class FormMain(QtGui.QMainWindow, formmain.Ui_MainWindow):
 			self.btnListen.setEnabled(not iscapture)
 			self.btnStop.setEnabled(iscapture)
 		else:
-			QtGui.QMessageBox.information(self, "Info", "Already listening!")
+			QtWidgets.QMessageBox.information(self, "Info", "Already listening!")
 
 	def btnStop_clicked(self):
 		global iscapture
@@ -469,7 +472,7 @@ class FormMain(QtGui.QMainWindow, formmain.Ui_MainWindow):
 			self.btnListen.setEnabled(not iscapture)
 			self.btnStop.setEnabled(iscapture)
 		else:
-			QtGui.QMessageBox.information(self, "Info", "Cannot stop!")
+			QtWidgets.QMessageBox.information(self, "Info", "Cannot stop!")
 
 	def btnClearHistory_clicked(self):
 		global bufcapture
@@ -478,7 +481,8 @@ class FormMain(QtGui.QMainWindow, formmain.Ui_MainWindow):
 		bufcapture = []
 		writeConsole("History clear")
 
-app = QtGui.QApplication([])
+
+app = QtWidgets.QApplication([])
 formmain = FormMain()
 formmain.show()
 app.exec_()

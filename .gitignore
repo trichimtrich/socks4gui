@@ -1,3 +1,6 @@
+*.pyc
+socks4.log
+
 ### VSCODE
 
 .vscode/*
