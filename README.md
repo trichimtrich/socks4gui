@@ -6,7 +6,7 @@ forked from [socks4 by spk](https://github.com/superkhung/socks4) 👌, with add
 - supports graphic UI (PyQt5).
 - supports multi platform (Windows/Linux/MacOS). Thanks to Qt5.
 - supports traffic logging and on-air packet filtering.
-- user-defined scripting. [Check example](/scripts))
+- user-defined scripting. [Check example](/scripts)
 
 ## Traffic flow
 
