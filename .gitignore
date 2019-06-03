@@ -1,5 +1,6 @@
 *.pyc
 socks4.log
+__pycache__
 
 ### VSCODE
 
