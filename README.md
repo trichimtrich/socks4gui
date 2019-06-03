@@ -14,7 +14,7 @@ forked from [socks4 by spk](https://github.com/superkhung/socks4) 👌, with add
 - Encap module: user-defined script (encode/encrypt/...)
 - Replace/Ignore mode: modify packet
 
-![model](https://github.com/trichimtrich/socks4gui/blob/master/img/model.png?raw=true)
+![model](https://github.com/trichimtrich/socks4gui/blob/master/docs/img/model.png?raw=true)
 
 *❗module can be disable (redstar)*
 
@@ -37,7 +37,7 @@ pip3 -i requirements.txt
 
 - Run program `chmod +x socks4gui.py; ./socks4gui.py`
 
-![Screenshot](https://github.com/trichimtrich/socks4gui/blob/master/img/screenshot.png?raw=true)
+![Screenshot](https://github.com/trichimtrich/socks4gui/blob/master/docs/img/screenshot.png?raw=true)
 
 - All you got to do is hit the `start` button and enjoy your socks server.
 
