@@ -41,6 +41,14 @@ pip3 -i requirements.txt
 
 - All you got to do is hit the `start` button and enjoy your socks server.
 
+## TODO
+
+- Think about data storage
+- Filter for cdn/static assets? / large request?
+- Separate app into modules
+- New form design?
+- 
+
 ## License
 
 GPL v3
