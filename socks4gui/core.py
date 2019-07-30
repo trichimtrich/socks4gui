@@ -4,9 +4,7 @@ from . import settings, filters
 from .form import rule as formrule
 from .form import main as formmain
 
-isCapture = False
 arrCapture = [] #capturing status, log
-
 
 class FormRule(QtWidgets.QDialog, formrule.Ui_Dialog):
     def __init__(self):
@@ -67,6 +65,7 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
         self.app = app
         self.reactor = reactor
         self.factory = factory
+        self.isCapture = False
 
     def closeEvent(self, event):
         self.app.quit()
@@ -104,7 +103,7 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
     #Widget events - Hijacking Tab
     def btnEncap_clicked(self):
         global modcap
-        if iscapture:
+        if self.isCapture:
             QtWidgets.QMessageBox.information(self, "Info", "Stop daemon first!"); return
         fn = QtWidgets.QFileDialog.getOpenFileName(self, "Open encap/decap module", filter='Python script (*.py);;All file (*.*)')
         if fn:
@@ -326,25 +325,22 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
                         addtxtData(st, inEdit); addtxtData('\n')
 
     def btnListen_clicked(self):
-        global iscapture
-        if iscapture == False:
-            reactor.listenTCP(setport, self.factory())
+        if self.isCapture == False:
+            self.reactor.listenTCP(setport, self.factory())
             writeConsole("Listen port: %s - Log file %s - Hex length %s - Data length %s" % (setport, setlog, sethexlen, setdatalen))
-            Thread(target=reactor.run, args=(False,)).start()
-            iscapture = True
-            self.btnListen.setEnabled(not iscapture)
-            self.btnStop.setEnabled(iscapture)
+            self.isCapture = True
+            self.btnListen.setEnabled(False)
+            self.btnStop.setEnabled(True)
         else:
             QtWidgets.QMessageBox.information(self, "Info", "Already listening!")
 
     def btnStop_clicked(self):
-        global iscapture
-        if iscapture == True:
-            reactor.stop()
+        if self.isCapture == True:
+            self.reactor.stop()
             writeConsole("Stop daemon")
-            iscapture = False
-            self.btnListen.setEnabled(not iscapture)
-            self.btnStop.setEnabled(iscapture)
+            self.isCapture = False
+            self.btnListen.setEnabled(True)
+            self.btnStop.setEnabled(False)
         else:
             QtWidgets.QMessageBox.information(self, "Info", "Cannot stop!")
 
