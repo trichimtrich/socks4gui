@@ -1,10 +1,75 @@
 from PyQt5 import QtGui, QtWidgets
-from . import settings, filters
-
 from .form import rule as formrule
 from .form import main as formmain
 
-arrCapture = [] #capturing status, log
+from imp import load_source
+from time import strftime
+
+class Application(QtWidgets.QApplication):
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        self.settings = {
+            "host": "0.0.0.0",
+            "port": 9999,
+            "logFile": "socks4.log",
+            "hexWidth": 16,
+            "maxData": 1024,
+        }
+
+        self.isIgnore = True
+        self.arrIgnore = []
+
+        self.isReplace = True
+        self.arrReplace = []
+
+        self.isCap = False
+        self.modCap = None
+
+        self.varObject = (0, 1)
+        self.varType = (0, 1, 2)
+
+        self.isCapture = False
+        self.bufCapture = []
+
+
+    def run(self):
+        import qt5reactor
+        qt5reactor.install()
+        from twisted.internet import reactor
+        from .proxy import MSock4Factory
+        
+        self.mainWindow = FormMain(self, reactor, MSock4Factory)
+        self.mainWindow.show()
+
+        reactor.run()
+
+    
+    #Utilities func
+    def writeConsole(self, msg): #console log
+        st = strftime("[%H:%M:%S %d/%m/%Y] ") + msg
+        open(self.settings["logFile"], "a+").write(st + "\n")
+        self.mainWindow.txtConsole.append(st)
+        maximumScroll = self.mainWindow.txtConsole.verticalScrollBar().maximum()
+        self.mainWindow.txtConsole.verticalScrollBar().setValue(maximumScroll)
+
+
+    def addCapture(self, msg, ind, status=0): #list capturing
+        itemInfo = QtWidgets.QListWidgetItem(msg)
+        itemInfo.setWhatsThis(str(ind))
+        if status == 1: itemInfo.setBackground(QtGui.QColor('red'))
+        if status == 2: itemInfo.setBackground(QtGui.QColor('green'))
+        self.mainWindow.lstCapture.addItem(itemInfo)
+
+    def addtxtData(self, txt, inEdit=0): #mix color in packet detail
+        if inEdit == 1:
+            self.mainWindow.txtData.setTextColor(QtGui.QColor('red'))
+            self.mainWindow.txtData.insertPlainText(txt)
+            self.mainWindow.txtData.setTextColor(QtGui.QColor('black'))
+        else:
+            self.mainWindow.txtData.insertPlainText(txt)
+        
+
 
 class FormRule(QtWidgets.QDialog, formrule.Ui_Dialog):
     def __init__(self):
@@ -65,7 +130,6 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
         self.app = app
         self.reactor = reactor
         self.factory = factory
-        self.isCapture = False
 
     def closeEvent(self, event):
         self.app.quit()
@@ -80,67 +144,79 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
         #     self.txtSetLog.setText(fn)
         pass
 
+
     def txtSetPort_textChanged(self):
-        global setport
-        setport = int(self.txtSetPort.text())
-        writeConsole("Change port to " + str(setport))
+        newPort = int(self.txtSetPort.text())
+        self.app.settings["port"] = newPort
+        self.app.writeConsole("Change port to {}".format(newPort))
+
 
     def txtSetLog_textChanged(self):
-        global setlog
-        setlog = str(self.txtSetLog.text())
-        writeConsole("Change log to " + setlog)
+        newLogFile = str(self.txtSetLog.text())
+        self.app.settings["logFile"] = newLogFile
+        self.app.writeConsole("Change log to {}".format(repr(newLogFile)))
+
 
     def txtSetHexLen_textChanged(self):
-        global sethexlen
-        sethexlen = int(self.txtSetHexLen.text())
-        writeConsole("Change HexLen to " + str(sethexlen))
+        newHexWidth = int(self.txtSetHexLen.text())
+        self.app.settings["hexWidth"] = newHexWidth
+        self.app.writeConsole("Change HexLen to {}".format(newHexWidth))
 
     def txtSetDataLen_textChanged(self):
-        global setdatalen
-        setdatalen = int(self.txtSetDataLen.text())
-        writeConsole("Change DataLen to " + str(setdatalen))
+        newMaxData = int(self.txtSetDataLen.text())
+        self.app.settings["maxData"] = newMaxData
+        self.app.writeConsole("Change DataLen to {}".format(newMaxData))
+
 
     #Widget events - Hijacking Tab
     def btnEncap_clicked(self):
-        global modcap
-        if self.isCapture:
+        if self.app.isCapture:
             QtWidgets.QMessageBox.information(self, "Info", "Stop daemon first!"); return
         fn = QtWidgets.QFileDialog.getOpenFileName(self, "Open encap/decap module", filter='Python script (*.py);;All file (*.*)')
         if fn:
             try:
-                modcap = load_source('', str(fn))
-                if modcap.enCap.__class__.__name__ != "function" or modcap.deCap.__class__.__name__ != "function":
-                    modcap = None
-            except: modcap = None
-            if modcap == None:
+                mod = load_source('', str(fn))
+                if mod.enCap.__class__.__name__ != "function" or mod.deCap.__class__.__name__ != "function":
+                    mod = None
+            except:
+                mod = None
+
+            self.app.modCap = mod
+
+            if mod == None:
                 QtWidgets.QMessageBox.information(self, "Info", "Cannot load encap/decap module!")
             else:
                 self.txtEncap.setText(fn)
-                writeConsole("Loaded encap/decap module")
+                self.app.writeConsole("Loaded encap/decap module")
+
 
     def chkEncap_stateChanged(self):
-        global iscap
-        iscap = self.chkEncap.isChecked()
-        if iscap: writeConsole("Capsule mode is ON")
-        else: writeConsole("Capsule mode is OFF")
-        if iscap == True and modcap == None:
+        isCap = self.chkEncap.isChecked()
+        self.app.isCap = isCap
+        if isCap:
+            self.app.writeConsole("Capsule mode is ON")
+        else:
+            self.app.writeConsole("Capsule mode is OFF")
+
+        if isCap and self.app.modCap == None:
             QtWidgets.QMessageBox.information(self, "Info", "Cannot load encap/decap module!")
             
     def chkReplace_stateChanged(self):
-        global isreplace
-        isreplace = self.chkReplace.isChecked()
-        if isreplace:
-            writeConsole("Replace mode is ON")
+        isReplace = self.chkReplace.isChecked()
+        self.app.isReplace = isReplace
+        if isReplace:
+            self.app.writeConsole("Replace mode is ON")
         else:
-            writeConsole("Replace mode is OFF")
+            self.app.writeConsole("Replace mode is OFF")
 
     def chkIgnore_stateChanged(self):
-        global isignore
-        isignore = self.chkIgnore.isChecked()
-        if isignore:
-            writeConsole("Ignore mode is ON")
+        isIgnore = self.chkIgnore.isChecked()
+        self.app.isIgnore = isIgnore
+        if isIgnore:
+            self.app.writeConsole("Ignore mode is ON")
         else:
-            writeConsole("Ignore mode is OFF")
+            self.app.writeConsole("Ignore mode is OFF")
+
 
     def tblRule_itemDoubleClicked(self):
         ind = self.tblRule.currentRow()
@@ -168,6 +244,7 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
         else:
             QtWidgets.QMessageBox.information(self, "Info", "Please select a row!")
 
+
     def btnDelRule_clicked(self):
         ind = self.tblRule.currentRow()
         if ind>=0:
@@ -177,6 +254,7 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
             parseRule()
         else:
             QtWidgets.QMessageBox.information(self, "Info", "Please select a row!")
+
 
     def btnUpRule_clicked(self):
         ind = self.tblRule.currentRow()
@@ -191,6 +269,7 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
         else:
             QtWidgets.QMessageBox.information(self, "Info", "Please select a row!")
 
+
     def btnDownRule_clicked(self):
         ind = self.tblRule.currentRow()
         if ind>=0 and ind<=self.tblRule.rowCount()-1:
@@ -203,6 +282,7 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
                 parseRule()
         else:
             QtWidgets.QMessageBox.information(self, "Info", "Please select a row!")
+
 
     def btnAddRule_clicked(self):
         formrule = FormRule()
@@ -236,7 +316,7 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
 
         self.lstCapture.clear()
         self.txtData.clear()
-        for i in xrange(len(bufcapture)):
+        for i in range(len(bufcapture)):
             if bufcapture[i][0][0] in varObject and bufcapture[i][1] in varType:
                 if bufcapture[i][0][0] == 0: #sender
                     addCapture("[>] %s:%s - %s:%s" % bufcapture[i][0][1], i, bufcapture[i][1])
@@ -253,11 +333,16 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
 
     def lstCapture_itemSelectionChanged(self):
         ind = self.lstCapture.currentRow()
-        if ind<0: return
-        ind = int(self.lstCapture.currentItem().whatsThis())
-        if ind<0: return
+        
+        if ind < 0:
+            return
 
-        obj, status, data, arst = bufcapture[ind]
+        ind = int(self.lstCapture.currentItem().whatsThis())
+        
+        if ind < 0:
+            return
+
+        obj, status, data, arst = self.app.bufCapture[ind]
 
         self.txtData.clear()
         printmode = self.cmbDetailType.currentText()
@@ -267,10 +352,12 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
             self.txtData.insertPlainText(data.encode('base64'))
         elif printmode == "Hexdump":
             lines = []
-            for c in xrange(0, len(data), sethexlen):
+            sethexlen = self.app.settings["hexWidth"]
+            sethexfilter = ''.join([(len(repr(chr(x))) == 3) and chr(x) or '.' for x in range(256)])
+            for c in range(0, len(data), sethexlen):
                 chars = data[c:c + sethexlen]
-                hex = ' '.join(['%02x' % ord(x) for x in chars])
-                printable = ''.join([sethexfilter[ord(x)] for x in chars])
+                hex = ' '.join(['%02x' % x for x in chars])
+                printable = ''.join([sethexfilter[x] for x in chars])
                 lines.append('%08x:  %-*s  %s\n' % (c, sethexlen * 3, hex, printable))
             self.txtData.insertPlainText(''.join(lines))
 
@@ -286,7 +373,7 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
                     k = data.split(c1)
                     e = c[:len(k[0])]
                     d = len(k[0])
-                    for i in xrange(1, len(k)):
+                    for i in range(1, len(k)):
                         e += [1]*len(c2); d += len(c1)
                         e += c[d:d+len(k[i])]; d += len(k[i])
                     data = c2.join(k)
@@ -294,7 +381,7 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
                 
                 if printmode == "Raw data":
                     st = ""; inEdit = 0
-                    for i in xrange(len(data)):
+                    for i in range(len(data)):
                         if inEdit != c[i]:
                             addtxtData(st, inEdit)
                             inEdit = c[i]; st = ""
@@ -302,12 +389,12 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
                     addtxtData(st, inEdit)
 
                 else:
-                    for off in xrange(0, len(data), sethexlen):
+                    for off in range(0, len(data), sethexlen):
                         addtxtData("%08x:  " % off)
 
                         linelen = sethexlen*3 + 2
                         st = ""; inEdit = 0
-                        for i in xrange(len(data[off:off + sethexlen])):
+                        for i in range(len(data[off:off + sethexlen])):
                             if inEdit != c[off+i]:
                                 addtxtData(st, inEdit); linelen -= len(st)
                                 inEdit = c[off+i]
@@ -316,7 +403,7 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
                         addtxtData(st, inEdit); linelen -= len(st); addtxtData(' '*linelen)
 
                         st = ""; inEdit = 0
-                        for i in xrange(len(data[off:off + sethexlen])):
+                        for i in range(len(data[off:off + sethexlen])):
                             if inEdit != c[off+i]:
                                 addtxtData(st, inEdit)
                                 inEdit = c[off+i]
@@ -324,45 +411,36 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
                             st += sethexfilter[ord(data[off+i])]
                         addtxtData(st, inEdit); addtxtData('\n')
 
+
     def btnListen_clicked(self):
-        if self.isCapture == False:
-            self.reactor.listenTCP(setport, self.factory())
-            writeConsole("Listen port: %s - Log file %s - Hex length %s - Data length %s" % (setport, setlog, sethexlen, setdatalen))
-            self.isCapture = True
+        if self.app.isCapture == False:
+            port = self.app.settings["port"]
+            host = self.app.settings["host"]
+            logFile = self.app.settings["logFile"]
+            hexWidth = self.app.settings["hexWidth"]
+            maxData = self.app.settings["maxData"]
+
+            self.listener = self.reactor.listenTCP(port, self.factory(self.app), interface=host)
+            self.app.writeConsole("Listen port: {} - Log file {} - Hex length {} - Data length {}".format(port, repr(logFile), hexWidth, maxData))
+            self.app.isCapture = True
             self.btnListen.setEnabled(False)
             self.btnStop.setEnabled(True)
         else:
             QtWidgets.QMessageBox.information(self, "Info", "Already listening!")
 
     def btnStop_clicked(self):
-        if self.isCapture == True:
-            self.reactor.stop()
-            writeConsole("Stop daemon")
-            self.isCapture = False
+        if self.app.isCapture == True:
+            self.listener.stopListening()
+            self.app.writeConsole("Stop daemon")
+            self.app.isCapture = False
             self.btnListen.setEnabled(True)
             self.btnStop.setEnabled(False)
         else:
             QtWidgets.QMessageBox.information(self, "Info", "Cannot stop!")
 
     def btnClearHistory_clicked(self):
-        global bufcapture
         self.lstCapture.clear()
         self.txtData.clear()
-        bufcapture = []
-        writeConsole("History clear")
+        self.app.bufCapture = []
+        self.app.writeConsole("History clear")
 
-
-
-def runApp():
-    app = QtWidgets.QApplication([])
-
-    import qt5reactor
-    qt5reactor.install()
-
-    from twisted.internet import reactor
-    from . import proxy
-
-    formmain = FormMain(app, reactor, proxy.MSock4Factory)
-    formmain.show()
-    
-    reactor.run()
