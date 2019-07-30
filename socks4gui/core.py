@@ -420,7 +420,18 @@ class FormMain(QtWidgets.QMainWindow, formmain.Ui_MainWindow):
             hexWidth = self.app.settings["hexWidth"]
             maxData = self.app.settings["maxData"]
 
-            self.listener = self.reactor.listenTCP(port, self.factory(self.app), interface=host)
+            factory = self.factory(self.app)
+
+            from OpenSSL import crypto
+            from twisted.internet import ssl
+            pem_priv = open("/Users/dangmt/Desktop/share/weirdsocket/cert/web.weirdsocket.com.key", "rb").read()
+            pem_cert = open("/Users/dangmt/Desktop/share/weirdsocket/cert/web.weirdsocket.com.crt", "rb").read()
+
+            priv = ssl.KeyPair.load(pem_priv, format=crypto.FILETYPE_PEM)
+            cert = ssl.PrivateCertificate.load(pem_cert, priv, format=crypto.FILETYPE_PEM)
+            factory.options = cert.options()
+
+            self.listener = self.reactor.listenTCP(port, factory, interface=host)
             self.app.writeConsole("Listen port: {} - Log file {} - Hex length {} - Data length {}".format(port, repr(logFile), hexWidth, maxData))
             self.app.isCapture = True
             self.btnListen.setEnabled(False)

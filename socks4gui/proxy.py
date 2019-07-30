@@ -1,5 +1,54 @@
 from twisted.internet.protocol import Factory
-from twisted.protocols.socks import SOCKSv4
+from twisted.protocols.socks import SOCKSv4, SOCKSv4Outgoing
+from twisted.internet import protocol, reactor
+from twisted.internet.threads import deferToThread
+import socket
+
+class MySOCKSv4Outgoing(SOCKSv4Outgoing):
+    def __init__(self, socks):
+        self.socks = socks
+        self.isSSL = False
+
+
+    def checkSSLCallback(self, result):
+        try:
+            print(1)
+            self.isSSL = result
+            if result:
+                self.transport.startTLS(self.socks.factory.options)
+                self.socks.transport.startTLS(self.socks.factory.options)
+            self.transport.socket.setblocking(0)
+            self.socks.transport.socket.setblocking(0)
+            self.transport.resumeProducing()
+            self.socks.transport.resumeProducing()
+        except Exception as ex:
+            print(ex)
+
+
+    def checkSSL(self):
+        try:
+            data = self.socks.transport.socket.recv(4096, socket.MSG_PEEK)
+            if data.startswith(b"\x16\x03"):
+                return True
+        except Exception as ex:
+            print(ex)
+        return False
+
+
+    def connectionMade(self):
+        print(2)
+        super().connectionMade()
+        print(3)
+        # ssl context switch if needed?
+        self.transport.pauseProducing()
+        self.socks.transport.pauseProducing()
+        self.transport.socket.setblocking(1)
+        self.socks.transport.socket.setblocking(1)
+        d = deferToThread(self.checkSSL)
+        d.addCallback(self.checkSSLCallback)
+        print(4)
+
+
 
 
 class MSock4Factory(Factory):
@@ -8,14 +57,21 @@ class MSock4Factory(Factory):
         self.app = app
 
     def buildProtocol(self, addr):
-        return MSock4(self.app)
+        return MSock4(self.app, self)
         
 
 #Socks4 proxy twisted
 class MSock4(SOCKSv4):
-    def __init__(self, app):
+    def __init__(self, app, factory):
         super().__init__()
         self.app = app
+        self.factory = factory
+
+    def connectClass(self, host, port, klass, *args):
+        if klass == SOCKSv4Outgoing:
+            return protocol.ClientCreator(reactor, MySOCKSv4Outgoing, *args).connectTCP(host, port)
+        else:
+            return super().connectClass(host, port, klass, *args)
 
 
     def editData(self, data): #edit data stream
