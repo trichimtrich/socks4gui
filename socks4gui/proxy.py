@@ -12,7 +12,6 @@ class MySOCKSv4Outgoing(SOCKSv4Outgoing):
 
     def checkSSLCallback(self, result):
         try:
-            print(1)
             self.isSSL = result
             if result:
                 self.transport.startTLS(self.socks.factory.options)
@@ -36,9 +35,7 @@ class MySOCKSv4Outgoing(SOCKSv4Outgoing):
 
 
     def connectionMade(self):
-        print(2)
         super().connectionMade()
-        print(3)
         # ssl context switch if needed?
         self.transport.pauseProducing()
         self.socks.transport.pauseProducing()
@@ -46,7 +43,6 @@ class MySOCKSv4Outgoing(SOCKSv4Outgoing):
         self.socks.transport.socket.setblocking(1)
         d = deferToThread(self.checkSSL)
         d.addCallback(self.checkSSLCallback)
-        print(4)
 
 
 
